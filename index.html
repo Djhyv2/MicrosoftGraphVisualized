@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head> 
+    <meta charset="utf-8"/>
+    <script language="javascript" type="text/javascript"  src="jquery-1.6.1.min.js"></script>
+    <script language="javascript" type="text/javascript" src="arbor.js" ></script>
+    <script language="javascript" type="text/javascript" src="graphics.js" ></script>
+    <script language="javascript" type="text/javascript" src="renderer.js" ></script> 
+</head>
+    
+<body> 
+    
+    <canvas id="viewport" width="1920" height="1080"></canvas>
+        <script language="javascript" type="text/javascript">
+            $.when
+            (
+                $.getJSON('http://localhost:8080/Dustindata.json'),
+                $.getJSON('http://localhost:8080/Jeffdata.json'),
+                $.getJSON('http://localhost:8080/Robertdata.json')
+            ).done(function(dustinData,jeffData,robertData)
+            {
+                var arborSys = arbor.ParticleSystem(2600, 512,.5,false,55,.02,1);
+                arborSys.renderer = Renderer("#viewport");
+                var allData= [dustinData,jeffData,robertData];
+                console.log(allData);
+                
+                
+                var colors = ["#A93226","#2E86C1","#1E8449"];
+                
+                
+                for(var personIteration=0;personIteration<allData.length;personIteration++)
+                {
+                    var TempPerson = allData[personIteration][0].value[1].toRecipients[0].emailAddress.name;
+                    var PersonNode = arborSys.addNode(TempPerson,{'label':TempPerson,'mass':50,'color':colors[personIteration]});
+                    for(var iteration=0;iteration<allData[personIteration][0].value.length;iteration++)
+                    { 
+                        var Temp = allData[personIteration][0].value[iteration];
+                        
+                        if(Temp.hasOwnProperty("sender"))
+                        {
+                            if(Temp.sender.hasOwnProperty("emailAddress"))
+                            {
+                                if(Temp.sender.emailAddress.hasOwnProperty("address"))
+                                {
+                                    if(Temp.sender.emailAddress.address.indexOf("@missouri.edu")>=0||Temp.sender.emailAddress.address.indexOf("@mail.missouri.edu")>=0)
+                                    {
+                                        var TempSend = Temp.sender.emailAddress.name;
+                                        console.log(TempSend);
+                                        arborSys.addNode(TempSend,{'label':TempSend});  
+                                        arborSys.addEdge(PersonNode,TempSend,{'color':colors[personIteration]});
+                                    }
+                                }
+                            }
+                        }
+                        
+                        
+                        if(Temp.hasOwnProperty("toRecipients"))
+                        {
+                            if(Temp.toRecipients.hasOwnProperty("0"))
+                            {
+                                if(Temp.toRecipients[0].hasOwnProperty("emailAddress"))
+                                {
+                                    if(Temp.toRecipients[0].emailAddress.hasOwnProperty("name"))
+                                    {
+                                        var Temp2 = Temp.toRecipients[0].emailAddress.name;
+                                        //if(Temp2!=TempPerson)
+                                        {
+                                            if(Temp.toRecipients[0].emailAddress.address.indexOf("@missouri.edu")>=0||Temp.toRecipients[0].emailAddress.address.indexOf("@mail.missouri.edu")>=0)
+                                            {    
+                                                var TempRec = Temp.toRecipients[0].emailAddress.name;
+                                                console.log(TempRec);
+                                                arborSys.addNode(TempRec,{'label':TempRec});  
+                                                arborSys.addEdge(PersonNode,TempRec,{'color':colors[personIteration]});
+                                                TempRec.p = arbor.Point(personIteration*150,personIteration*50);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    var PersonNode = arborSys.addNode(TempPerson,{'label':TempPerson,'mass':50,'color':colors[personIteration]});
+                }       
+            });
+        </script>
+    
+</body>
+
+</html>
