@@ -1,1 +1,1 @@
-# MicrosoftGraphVisualized
+Micrsoft Graph Visualized was created during the 36 hour long TigerHacks 2017 located at Lafferre Hall on Mizzou's campus on October 15-16. Microsoft Graph Visualized was created by Dustin Hengel, Jeffrey Freet, and Robert Graman. It was built using JQuery 1.6, Arbor JS, and html and used a Node.JS local server. 
